@@ -32,36 +32,14 @@ let parsedtoTable = (parsedCode) =>{
     return module;
 };
 
-/* eslint-disable max-lines-per-function */
-/* eslint-disable complexity */
-let expToTable = (exp) => {
-    switch(exp.type) {
-    case 'BlockStatement':
-        for (var i = 0; i < exp.body.length; i++)
-            expToTable(exp.body[i]);
-        break;
-    case 'ExpressionStatement':
-        expToTable(exp.expression);
-        break;
-    case 'AssignmentExpression':
-        assignmentExpression(exp);
-        break;
-    case 'VariableDeclaration':
-        variableDeclaration(exp);
-        break;
-    case 'WhileStatement':
-        whileStatement(exp);
-        break;
-    case 'IfStatement':
-        ifStatement(exp);
-        break;
-    case 'ReturnStatement':
-        returnStatement(exp);
-        break;
-    case 'ForStatement':
-        forStatement(exp);
-        break;
-    }
+
+let blockStatementExpression = (exp) => {
+    for (var i = 0; i < exp.body.length; i++)
+        expToTable(exp.body[i]);
+};
+
+let expressionStatement =(exp) => {
+    expToTable(exp.expression);
 };
 
 let assignmentExpression = (exp) => {
@@ -125,6 +103,20 @@ let forStatement = (exp) => {
     let condition = init  + test +';' + update;
     let line = exp.loc.start.line;
     addRow(line,type,undefined,condition,undefined);
+};
+
+var dictionary = {};
+dictionary.BlockStatement = blockStatementExpression;
+dictionary.ExpressionStatement = expressionStatement;
+dictionary.AssignmentExpression = assignmentExpression;
+dictionary.VariableDeclaration = variableDeclaration;
+dictionary.WhileStatement = whileStatement;
+dictionary.IfStatement = ifStatement;
+dictionary.ReturnStatement = returnStatement;
+dictionary.ForStatement = forStatement;
+
+let expToTable = (exp) => {
+    dictionary[exp.type](exp);
 };
 
 
